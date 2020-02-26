@@ -4,6 +4,7 @@
       <side-bar/>
     </div>
     <div style="flex: 1; background: #fff; display: flex; flex-direction: column;">
+      <mod-nav/>
       <tool-bar/>
       <Container>111</Container>
     </div>
@@ -11,6 +12,7 @@
 </template>
 
 <script>
+import ModNav from '@/components/modNav'
 import ToolBar from '@/components/toolBar'
 import SideBar from '@/components/sideBar'
 import Container from '../components/container'
@@ -21,6 +23,7 @@ export default {
   mixins: [mixin],
   components: {
     Container,
+    ModNav,
     ToolBar,
     SideBar
   },

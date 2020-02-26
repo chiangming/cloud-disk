@@ -4,34 +4,12 @@
       <Breadcrumb/>
     </div>
     <div class="btn-list">
-      <div v-if="checkedBuffer.length === 0">
-        <ButtonGroup size="large" class="btn-grounp" >
-          <Button  @click="changeViewTo('list')" :class="view === 'list'? 'btn-active': ''" key="list">
+          <Button  @click="changeViewTo('list')" class="btn-item" :class="view === 'list'? 'btn-active': ''" key="list">
             <img src="../assets/images/list.png" class="btn-img" />
           </Button>
-          <Button  @click="changeViewTo('thumbnail')" :class="view === 'thumbnail'? 'btn-active': ''" key="thumbnail">
+          <Button  @click="changeViewTo('thumbnail')" class="btn-item" :class="view === 'thumbnail'? 'btn-active': ''" key="thumbnail">
             <img src="../assets/images/big.png" class="btn-img" />
           </Button>
-        </ButtonGroup>
-        <ButtonGroup size="large" class="btn-grounp" >
-          <Button  @click="changeRankTo('name')" :class="rank === 'name'? 'btn-active': ''" key="name">
-            <img src="../assets/images/sort.png" class="btn-img" />
-          </Button>
-          <Button  @click="changeRankTo('time')" :class="rank === 'time'? 'btn-active': ''" key="time">
-            <img src="../assets/images/time.png" class="btn-img" />
-          </Button>
-        </ButtonGroup>
-      </div>
-      <div v-else>
-        <ButtonGroup size="large" class="btn-grounp" >
-          <Button  class="btn-item" key="delete" @click="modal1 = true">删除</Button>
-          <Button  class="btn-item" key="rename" @click="renameStart">重命名</Button>
-          <Button  class="btn-item" key="moveTo" @click="modal2 = true">移动到</Button>
-          <Button  class="btn-item" key="download" disabled>下载</Button>
-          <Button  class="btn-item" key="share" disabled>分享</Button>
-        </ButtonGroup>
-      </div>
-      <Button style="background-color: #1296db;border: none;border-radius: 2px;font-size: 16px;font-weight: bold;" type="primary" icon="plus-round" size="large" @click="addNewFolder" >新建文件夹</Button>
     </div>
     <Modal
       v-model="modal1"
@@ -53,7 +31,7 @@
 </template>
 
 <script>
-import { Button, ButtonGroup, Modal, Message, Tree } from 'view-design'
+import { Button, Modal, Message, Tree } from 'view-design'
 import Breadcrumb from './breadcrumb'
 import { getChildrenById, canMoveData, getCheckedFileFromBuffer } from '../utils/utils.js'
 import { mapState } from 'vuex'
@@ -63,7 +41,6 @@ export default {
   mixins: [mixin],
   components: {
     Button,
-    ButtonGroup,
     Breadcrumb,
     Modal,
     Tree
@@ -154,14 +131,6 @@ export default {
     cancelDelete () {
       Message.info('取消删除文件！')
     },
-    addNewFolder () {
-      if (this.type !== 'folder') {
-        this.changeCheckedAll({ checkAll: false })
-        this.changeMenu({ type: 'folder' })
-        this.changeCurrentListBuffer()
-      }
-      this.$store.$emit('addNewFolderHandle')
-    },
     okMove () {
       const data = getCheckedFileFromBuffer(this.checkedBuffer)
       let canMove = true
@@ -244,11 +213,12 @@ export default {
   justify-content: space-between;
   height: 64px;
   line-height: 64px;
-  padding-left: 20px;
+  padding:0 50px;
 }
 .btn-list {
   display: flex;
   justify-content: flex-end;
+  align-items: center;
   padding: 13px 45px 14px 0;
 }
 .btn-grounp {
@@ -268,6 +238,7 @@ export default {
 }
 .btn-item {
   font-weight: 500;
+  margin-left: 20px;
 }
 .vertical-center-modal {
   display: flex;

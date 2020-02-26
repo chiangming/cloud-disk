@@ -135,6 +135,13 @@ const mutations = {
   },
   SET_EVENT: (state, payload) => {
     state.eventType = payload
+  },
+  SHOW_UPLOAD: (state, payload) => {
+    state.showUpload = payload.upload
+    console.log(state.showUpload)
+  },
+  SET_DATA: (state, payload) => {
+    state.data = payload.data
   }
 }
 

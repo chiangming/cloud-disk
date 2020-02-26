@@ -2,7 +2,7 @@
   <div class="sider-bar-container">
     <div class="avater">
       <a class="logo" href="javascript:;">
-        <img src="@/assets/images/微云.png">
+        <img src="@/assets/images/cloud.png">
         <span>云盘</span>
       </a>
       <Search></Search>
@@ -56,6 +56,7 @@ import { Menu, MenuItem, Icon, Progress } from 'view-design'
 import { mapState } from 'vuex'
 import Search from '@/components/search'
 import mixin from '@/store/mixin.js'
+import axios from 'axios'
 
 export default {
   mixins: [mixin],
@@ -79,11 +80,25 @@ export default {
       this.changeCheckedAll({ checkAll: false })
       this.changeCurrentListBuffer()
     }
+  },
+  created () {
+    axios({
+      method: 'get',
+      url: 'http://103.14.34.148:3030/data'
+    }).then(response => {
+      console.log(response)
+      if (response.status === 200 && response.data) {
+        console.log(response.data)
+        console.log(this)
+        this.$store.commit('SET_DATA', { data: response.data })
+        this.selectHandle('folder')
+      }
+    })
   }
 }
 </script>
 
-<style scoped>
+<style>
 .sider-bar-container {
   border-right: 1px solid #dddee1;
   display: flex;
@@ -102,7 +117,12 @@ export default {
   align-items: flex-start;
   min-height: 200px;
 }
-
+.ivu-menu-light {
+    background: #f5f7f9!important;
+}
+.ivu-progress-inner {
+  background-color: #ffffff!important;
+}
 .logo {
   font-size: 20px;
   font-weight: bold;
@@ -111,8 +131,8 @@ export default {
   margin-left: 20px;
 }
 .logo img {
-  width: 60px;
-  height: 60px;
+  width: 74px;
+  height: 46px;
   margin: 0 10px 0 5px;
   display: inline-block;
   box-sizing: border-box;

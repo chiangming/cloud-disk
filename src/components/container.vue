@@ -2,19 +2,11 @@
   <div class="container" @click.left.self="contextMenuclose" @click.right.prevent="contextMenu1Handle">
     <div v-if="list.length">
       <div v-if="view === 'thumbnail'">
-        <table class="list">
-        <thead>
-          <tr class="table-line">
-            <th><Checkbox size="large" class="checkbox" :value="checkAll" @on-change="checkAllHandle"></Checkbox></th>
-            <th>名称</th>
-          </tr>
-        </thead>
-        </table>
         <ul id="thumbnail">
-          <li v-for="item in list" :class="['list-item', {'checked': item.checked}]" :key="item.id" @click.right.stop.prevent="contextMenu2Handle($event, item.id)">
+          <li v-for="item in list" :class="['list-item', {'checked': item.checked}]" :key="item.id" @click.right.stop.prevent="contextMenu2Handle($event, item.id, item)">
             <div class="list-item-content" >
               <Checkbox size="large" class="checkbox" :value="item.checked" @on-change="checkHandle(item.id)"></Checkbox>
-              <div class="item-image" @click="into(item.id, item.type)">
+              <div class="item-image" @click="into(item.id, item.type,item)">
                 <img src="../assets/images/folder.png" class="big-image" v-if="item.type === 'folder'">
                 <img src="../assets/images/folder_f.png" class="big-image" v-else-if="item.type === 'folder_f'">
                 <img src="../assets/images/folder_m.png" class="small-image" v-else-if="item.type === 'folder_m'">
@@ -38,7 +30,8 @@
           </li>
         </ul>
       </div>
-      <table class="list" v-else>
+      <div v-else>
+      <table class="list" >
         <thead>
           <tr class="table-line" v-if="!checkAll">
             <th><Checkbox size="large" class="checkbox" :value="checkAll" @on-change="checkAllHandle"></Checkbox></th>
@@ -54,12 +47,12 @@
           </tr>
         </thead>
         <tbody id="listInfo">
-          <tr v-for="item in list" :key="item.id" :class="{'table-line':true,'checked': item.checked}" @click.right.stop.prevent="contextMenu2Handle($event, item.id)">
+          <tr v-for="item in list" :key="item.id" :class="{'table-line':true,'checked': item.checked}" @click.right.stop.prevent="contextMenu2Handle($event, item.id, item)">
             <td>
               <Checkbox size="large" class="checkbox" :value="item.checked" @on-change="checkHandle(item.id)"></Checkbox>
             </td>
             <td>
-              <div class="file-icon" @click="into(item.id, item.type)">
+              <div class="file-icon" @click="into(item.id, item.type,item)">
                 <img src="../assets/images/folder.png" class="t-big-image" v-if="item.type === 'folder'">
                 <img src="../assets/images/folder_f.png" class="t-big-image" v-else-if="item.type === 'folder_f'">
                 <img src="../assets/images/folder_m.png" class="t-small-image" v-else-if="item.type === 'folder_m'">
@@ -87,12 +80,13 @@
           </tr>
         </tbody>
       </table>
-      <uploader></uploader>
+      </div>
     </div>
-    <div class="empty" v-else>
-      <img src="../assets/images/暂无消息.png">
-      <p>暂无内容哦～</p>
+    <div class="empty" v-else @click.left.self="contextMenuclose">
+      <img src="../assets/images/icon-nopicture@2x.png">
+      <p>暂无更多内容</p>
     </div>
+    <uploader class="uploader"></uploader>
     <Menu theme="light" class="contextMenu" :style="{left: contextMenuLeft, top: contextMenuTop}" v-if="contextMenu1" @on-select.self="rightHandle1" accordion active-name="2-2" :open-names="['1']">
       <MenuItem name="1">刷新</MenuItem>
       <Submenu name="2">
@@ -114,31 +108,58 @@
         </template>
         <MenuItem name="3-1">
           <Icon type="checkmark" :color="rank === 'name' ? '#0097EB' : 'rgba(255,255,255,0)'"></Icon>
-          <span :style="{color: rank === 'name' ? '#0097EB' : '#495060'}">字母</span>
+          <span :style="{color: rank === 'name' ? '#0097EB' : '#495060'}">名称</span>
         </MenuItem>
         <MenuItem name="3-2">
           <Icon type="checkmark" :color="rank === 'time' ? '#0097EB' : 'rgba(255,255,255,0)'"></Icon>
-          <span :style="{color: rank === 'time' ? '#0097EB' : '#495060'}">时间</span>
+          <span :style="{color: rank === 'time' ? '#0097EB' : '#495060'}">上次修改时间</span>
         </MenuItem>
       </Submenu>
       <MenuItem name="4">新建文件夹</MenuItem>
     </Menu>
     <Menu theme="light" class="contextMenu" :style="{left: contextMenuLeft, top: contextMenuTop}" v-if="contextMenu2" @on-select.self="rightHandle2">
-      <MenuItem name="1" disabled>下载</MenuItem>
+      <MenuItem name="1">下载</MenuItem>
       <MenuItem name="2" disabled>分享</MenuItem>
       <MenuItem name="3">移动到</MenuItem>
       <MenuItem name="4">重命名</MenuItem>
       <MenuItem name="5">删除</MenuItem>
     </Menu>
+    <Modal
+      v-model="modal3"
+      :title="currItem.name"
+      class-name="vertical-center-modal"
+      width=830
+      :mask-closable="false"
+      @on-ok="closeModal"
+      @on-cancel="closeModal">
+      <video id="video1" width="800" height="500" controls ref="myVideo">
+        <source type="video/mp4" ref="video">
+        您的浏览器不支持 HTML5 video 标签。
+      </video>
+    </Modal>
+    <Modal
+      v-model="modal4"
+      :title="currItem.name"
+      class-name="vertical-center-modal"
+      width=830
+      :mask-closable="false"
+      @on-ok="closeAudioModal"
+      @on-cancel="closeAudioModal">
+      <audio id="audio1"  controls="controls" loop="loop" ref="myAudio">
+        <source type="audio/mpeg" ref="audio" />
+        您的浏览器不支持 audio 标签。
+      </audio>
+    </Modal>
   </div>
 </template>
 
 <script>
-import { Checkbox, Message, Menu, Submenu, MenuItem, Icon } from 'view-design' // , Menu,
+import { Checkbox, Message, Menu, Submenu, MenuItem, Icon, Modal } from 'view-design'
 import { nameCanUse } from '../utils/utils.js'
 import { mapState, mapGetters } from 'vuex'
 import uploader from './uploader'
 import mixin from '@/store/mixin.js'
+// import axios from 'axios'
 
 export default {
   name: 'container',
@@ -149,8 +170,8 @@ export default {
     Submenu,
     MenuItem,
     Icon,
-    uploader
-    // Modal
+    uploader,
+    Modal
   },
   data () {
     return {
@@ -161,7 +182,12 @@ export default {
       contextMenu2: false,
       contextMenuLeft: '0px',
       contextMenuTop: '0px',
-      modal3: false
+      modal3: false,
+      modal4: false,
+      currItem: {
+        title: '',
+        src: ''
+      }
     }
   },
   computed: {
@@ -183,11 +209,25 @@ export default {
     }
   },
   methods: {
-    into (id, type) {
+    into (id, type, item) {
       if (type === 'video') {
+        this.currItem = item
         this.modal3 = true
+        this.$refs.video.src = this.currItem.src
+        this.$nextTick(() => {
+          this.$refs.myVideo.load()
+        })
       }
       if (type === 'music') {
+        this.currItem = item
+        this.modal4 = true
+        this.$refs.audio.src = this.currItem.src
+        this.$nextTick(() => {
+          this.$refs.myAudio.load()
+        })
+        // return Message.error('此文件类型不能预览，建议下载后打开！')
+      }
+      if (type === 'zip') {
         return Message.error('此文件类型不能预览，建议下载后打开！')
       }
       if (type !== 'folder' && type !== 'folder_f' && type !== 'folder_m') return
@@ -245,6 +285,7 @@ export default {
       if (this.contextMenu2 === true) {
         this.contextMenu2 = false
       }
+      this.$store.commit('SHOW_UPLOAD', { upload: false })
     },
     contextMenu1Handle (e) {
       console.log('Meun1')
@@ -293,7 +334,8 @@ export default {
         })
       }
     },
-    contextMenu2Handle (e, id) {
+    contextMenu2Handle (e, id, item) {
+      this.currItem = item
       const targetInBuffer = Object.keys(this.checkedBuffer).some((item) => {
         return item * 1 === id
       })
@@ -320,8 +362,25 @@ export default {
       this.contextMenuTop = top + 'px'
     },
     rightHandle2 (name) {
-      console.log(name)
+      console.log(this.currItem)
       this.contextMenu1 = false
+      if (name === '1') {
+        const type = this.currItem.type
+        if (type === 'folder' || type === 'folder_f' || type === 'folder_m') {
+          return Message.error('暂不支持文件夹下载')
+        }
+        var eleLink = document.createElement('a')
+        eleLink.download = this.currItem.name
+        eleLink.style.display = 'none'
+        // 字符内容转变成blob地址
+        var blob = new Blob([this.currItem.src])
+        eleLink.href = URL.createObjectURL(blob)
+        // 触发点击
+        document.body.appendChild(eleLink)
+        eleLink.click()
+        // 然后移除
+        document.body.removeChild(eleLink)
+      }
       if (name === '3') {
         this.$store.$emit('moveFolderTo')
       }
@@ -335,6 +394,10 @@ export default {
     closeModal () {
       this.$refs.myVideo.pause()
       this.modal3 = false
+    },
+    closeAudioModal () {
+      this.$refs.myAudio.pause()
+      this.modal4 = false
     }
   },
   mounted () {
@@ -373,6 +436,20 @@ export default {
 </script>
 
 <style scoped>
+  .uploader{
+    position: absolute;
+    left: 50%;
+    top:50%;
+    transform: translate(-50%,-50%);
+    background: rgba(255,255,255,0.8)
+  }
+  #video1{
+    outline: none;
+  }
+  #audio1{
+    width:100%;
+    outline: none;
+  }
   .item-image{
     margin-top: 10px;
   }

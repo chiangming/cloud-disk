@@ -7,10 +7,11 @@
 </template>
 
 <script>
-
 export default {
   name: 'app',
   components: {
+  },
+  created () {
   }
 }
 </script>

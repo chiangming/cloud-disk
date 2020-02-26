@@ -16,7 +16,6 @@ store.$off = function (evt) {
 }
 
 store.$emit = function (evt, data) {
-  console.log('emit!!!!!!')
   if (!this.$events['$' + evt]) return
   this.$events['$' + evt](data)
   this.commit('SET_EVENT', evt) // 将事件evt当成payload提交给mutation
