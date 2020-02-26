@@ -74,7 +74,7 @@ export default {
   },
   methods: {
     selectHandle (name) {
-      console.log(name)
+      // console.log(name)
       this.changeMenu({ type: name })
       this.changeCurrentListId({ id: 0 })
       this.changeCheckedAll({ checkAll: false })
@@ -86,10 +86,10 @@ export default {
       method: 'get',
       url: 'http://103.14.34.148:3030/data'
     }).then(response => {
-      console.log(response)
+      // console.log(response)
       if (response.status === 200 && response.data) {
-        console.log(response.data)
-        console.log(this)
+        // console.log(response.data)
+        // console.log(this)
         this.$store.commit('SET_DATA', { data: response.data })
         this.selectHandle('folder')
       }

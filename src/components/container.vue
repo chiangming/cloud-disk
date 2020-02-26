@@ -288,7 +288,7 @@ export default {
       this.$store.commit('SHOW_UPLOAD', { upload: false })
     },
     contextMenu1Handle (e) {
-      console.log('Meun1')
+      // console.log('Meun1')
       this.contextMenu1 = true
       this.contextMenu2 = false
       let left = e.pageX
@@ -362,7 +362,7 @@ export default {
       this.contextMenuTop = top + 'px'
     },
     rightHandle2 (name) {
-      console.log(this.currItem)
+      // console.log(this.currItem)
       this.contextMenu1 = false
       if (name === '1') {
         const type = this.currItem.type

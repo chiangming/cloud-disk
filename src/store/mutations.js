@@ -34,7 +34,7 @@ const mutations = {
     }
   },
   CHANGE_CHECKED_ALL: (state, payload) => {
-    function checkHandle (checked) {
+    function checkHandle(checked) {
       if (checked) {
         state.checkAll = false
         state.checkedBuffer = { length: 0 }
@@ -49,7 +49,7 @@ const mutations = {
           item.checked = true
           state.checkedBuffer[item.id] = item
           state.checkedBuffer.length++
-          return item
+            return item
         })
       }
     }
@@ -103,7 +103,7 @@ const mutations = {
     })
   },
   CHANGE_NAME: (state, payload) => {
-    console.log(payload)
+    // console.log(payload)
     state.data[payload.id].name = payload.newName
   },
   DELETE_DATE: state => {
@@ -128,7 +128,7 @@ const mutations = {
     }
     state.checkedBuffer[payload.id] = newData
     state.checkedBuffer.length++
-    state.currentListBuffer.push(newData)
+      state.currentListBuffer.push(newData)
   },
   MOVE_TARGET: (state, payload) => {
     state.data[payload.id].pId = payload.targetId
@@ -138,7 +138,7 @@ const mutations = {
   },
   SHOW_UPLOAD: (state, payload) => {
     state.showUpload = payload.upload
-    console.log(state.showUpload)
+      // console.log(state.showUpload)
   },
   SET_DATA: (state, payload) => {
     state.data = payload.data
